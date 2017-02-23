@@ -6,6 +6,9 @@ using Newtonsoft.Json;
 
 namespace TheGuin3.Config
 {
+    // YES I KNOW THIS IS BAD
+    // YES IT WILL BE CACHED LATER
+
     public static class ConfigSystem
     {
         public static string GetText(string path)
