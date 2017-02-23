@@ -50,11 +50,14 @@ namespace TheGuin3.Interfaces.Base
 
                 if (isValidModule)
                 {
-                    foreach (var type in module.Assembly.GetTypes())
+                    if (module.Assembly != null)
                     {
-                        object[] attributes = (object[])type.GetTypeInfo().GetCustomAttributes(hook, true);
-                        if (attributes.Length > 0)
-                            Activator.CreateInstance(type, arguments);
+                        foreach (var type in module.Assembly.GetTypes())
+                        {
+                            object[] attributes = (object[])type.GetTypeInfo().GetCustomAttributes(hook, true);
+                            if (attributes.Length > 0)
+                                Activator.CreateInstance(type, arguments);
+                        }
                     }
                 }
             }
