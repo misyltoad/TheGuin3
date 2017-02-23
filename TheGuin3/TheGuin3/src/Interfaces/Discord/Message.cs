@@ -16,7 +16,8 @@ namespace TheGuin3.Interfaces.Discord
 
         private void AddEmbed(Embed embed)
         {
-            EmbedBuilder builder = new EmbedBuilder();
+            DiscordInterface = new EmbedBuilder();
+            var builder = DiscordInterface;
 
             builder.Author.Name = embed.Author.Name;
             builder.Author.IconUrl = embed.Author.IconUrl;

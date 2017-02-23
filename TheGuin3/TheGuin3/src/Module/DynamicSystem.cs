@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
@@ -73,7 +74,11 @@ namespace TheGuin3.Module
 
             foreach (var diagnostic in result.Diagnostics)
             {
-                Console.WriteLine(diagnostic.GetMessage());
+                Console.WriteLine("({0}) {1} at {2}: {3}", 
+                    diagnostic.Id, 
+                    diagnostic.Severity == DiagnosticSeverity.Error ? "Error" : diagnostic.Severity == DiagnosticSeverity.Warning ? "Warning" : "Info", 
+                    diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).StartLinePosition.Line, 
+                    diagnostic.GetMessage());
             }
 
             if (!result.Success)
@@ -85,7 +90,6 @@ namespace TheGuin3.Module
 
         private Type[] Dependencies => new Type[]
         {
-            typeof(Program),
             typeof(object),
             typeof(System.Drawing.Image),
             typeof(System.Net.Http.HttpClient),
@@ -96,10 +100,21 @@ namespace TheGuin3.Module
             get
             {
                 List<MetadataReference> references = new List<MetadataReference>();
-                foreach(var dependency in Dependencies)
+                foreach (var dependency in Dependencies)
                 {
                     references.Add(MetadataReference.CreateFromFile(dependency.GetTypeInfo().Assembly.Location));
                 }
+
+                
+                references.Add(MetadataReference.CreateFromFile(System.Reflection.Assembly.GetEntryAssembly().Location));
+
+                // HACK FOR .NETCore!
+
+                var dd = typeof(Enumerable).GetTypeInfo().Assembly.Location;
+                var coreDir = Directory.GetParent(dd);
+                references.Add(MetadataReference.CreateFromFile(coreDir.FullName + Path.DirectorySeparatorChar + "mscorlib.dll"));
+                references.Add(MetadataReference.CreateFromFile(coreDir.FullName + Path.DirectorySeparatorChar + "System.Runtime.dll"));
+
                 return references.ToArray();
             }
         }
@@ -129,7 +144,18 @@ namespace TheGuin3.Module
         }
 
         public Assembly Assembly;
-        private string SourceFolder => String.Format("{0}/{1}/hooks", Config.StaticConfig.Paths.ModulesPath, Module.Meta.Name);
+        private string SourceFolder
+        {
+            get
+            {
+                var modulePath = String.Format("{0}/{1}", Config.StaticConfig.Paths.ModulesPath, Module.Meta.Name);
+                try { Directory.CreateDirectory(modulePath); } catch { }
+                var hookPath = String.Format("{0}/hooks", modulePath);
+                try { Directory.CreateDirectory(hookPath); } catch { }
+
+                return hookPath;
+            }
+        }
         private FileSystemWatcher Watcher;
         private Module Module;
     }

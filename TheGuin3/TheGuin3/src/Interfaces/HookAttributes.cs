@@ -7,7 +7,7 @@ namespace TheGuin3.Interfaces
     [AttributeUsage(AttributeTargets.All)]
     public class OnCommand : System.Attribute
     {
-        public OnCommand(string name, string description, bool adminOnly)
+        public OnCommand(string name, string description, bool adminOnly = false)
         {
             Name = name;
             Description = description;

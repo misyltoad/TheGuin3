@@ -14,14 +14,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="data\**" />
+    <EmbeddedResource Remove="data\**" />
+    <None Remove="data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="CoreCompat.System.Drawing" Version="1.0.0-beta006" />
     <PackageReference Include="Discord.Net.Commands" Version="1.0.0-rc-00604" />
     <PackageReference Include="Discord.Net.Core" Version="1.0.0-rc-00604" />
     <PackageReference Include="Discord.Net.Rpc" Version="1.0.0-rc-00604" />
     <PackageReference Include="Discord.Net.WebSocket" Version="1.0.0-rc-00604" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="1.1.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="1.3.0" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="1.3.0" />
+    <PackageReference Include="Microsoft.Net.Compilers.netcore" Version="2.1.0-rc5-61423-01" />
+    <PackageReference Include="System.Runtime" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
   </ItemGroup>
 
