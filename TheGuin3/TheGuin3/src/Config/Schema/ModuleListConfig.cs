@@ -13,7 +13,7 @@ namespace TheGuin3.Config.Schema
     {
         public DefualtModuleConfig()
         {
-            DefaultContent = "{\n'Modules': ['core']\n";
+            DefaultContent = "{\n'Modules': ['core']\n}";
         }
     }
 

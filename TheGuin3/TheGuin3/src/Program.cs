@@ -8,7 +8,6 @@ namespace TheGuin3
         static void Main(string[] args)
         {
             Directory.CreateDirectory(Config.StaticConfig.Paths.DataPath);
-            Directory.CreateDirectory(Config.StaticConfig.Paths.ConfigPath);
             Directory.CreateDirectory(Config.StaticConfig.Paths.ModulesPath);
             Directory.CreateDirectory(Config.StaticConfig.Paths.TempPath);
 

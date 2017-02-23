@@ -10,7 +10,7 @@ namespace TheGuin3.Modules.Core
         public PingCommand(TheGuin3.Interfaces.Base.Command.Context Context)
         {
 			if (Context.Channel != null)
-				Context.Channel.SendMessage("Ping!");
+				Context.Channel.SendMessage("Pong!");
 		}
     }
 }

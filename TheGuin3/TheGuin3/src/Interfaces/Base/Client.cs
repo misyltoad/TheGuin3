@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace TheGuin3.Interfaces.Base
@@ -29,7 +30,33 @@ namespace TheGuin3.Interfaces.Base
             
             if (context.IsCommand)
             {
+                ExecuteHook(typeof(OnCommand), server, context);
                 return;
+            }
+        }
+
+        private void ExecuteHook(Type hook, Server server, params object[] arguments)
+        {
+            var availableModules = Config.Schema.ModuleListConfig.Get(server).Modules;
+
+            foreach (var module in ModuleRegistry.Modules)
+            {
+                bool isValidModule = false;
+                foreach (var availableModuleName in availableModules)
+                {
+                    if (availableModuleName == module.Meta.Name)
+                        isValidModule = true;
+                }
+
+                if (isValidModule)
+                {
+                    foreach (var type in module.Assembly.GetTypes())
+                    {
+                        object[] attributes = (object[])type.GetTypeInfo().GetCustomAttributes(hook, true);
+                        if (attributes.Length > 0)
+                            Activator.CreateInstance(type, arguments);
+                    }
+                }
             }
         }
 

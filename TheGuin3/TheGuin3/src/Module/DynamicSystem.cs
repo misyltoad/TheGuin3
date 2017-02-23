@@ -59,7 +59,11 @@ namespace TheGuin3.Module
                     return;
                 }
 
-                syntaxTrees.Add(CSharpSyntaxTree.ParseText(code));
+                var relativePath = "";
+                if (path.Length > Config.StaticConfig.Paths.ModulesPath.Length)
+                    relativePath = path.Substring(Config.StaticConfig.Paths.ModulesPath.Length);
+
+                syntaxTrees.Add(CSharpSyntaxTree.ParseText(code, null, relativePath));
             }
 
             CSharpCompilation compilation = CSharpCompilation.Create(
@@ -72,11 +76,17 @@ namespace TheGuin3.Module
             var ms = new MemoryStream();
             EmitResult result = compilation.Emit(ms);
 
+            if (!result.Success)
+            {
+                Console.WriteLine("Compiling module \"{0}\" FAILED!", Module.Meta.Name);
+            }
+
             foreach (var diagnostic in result.Diagnostics)
             {
-                Console.WriteLine("({0}) {1} at {2}: {3}", 
+                Console.WriteLine("({0}) {1} in {2} at {3}: {4}", 
                     diagnostic.Id, 
                     diagnostic.Severity == DiagnosticSeverity.Error ? "Error" : diagnostic.Severity == DiagnosticSeverity.Warning ? "Warning" : "Info", 
+                    diagnostic.Location.SourceTree.FilePath,
                     diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).StartLinePosition.Line, 
                     diagnostic.GetMessage());
             }

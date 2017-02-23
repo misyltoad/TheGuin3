@@ -57,6 +57,12 @@ namespace TheGuin3.Config
 
         private static void MakeDefault(Server server = null)
         {
+            Directory.CreateDirectory(Config.StaticConfig.Paths.ConfigPath);
+            Directory.CreateDirectory(Config.StaticConfig.Paths.ConfigPath + "/server");
+
+            if (server != null)
+                Directory.CreateDirectory(Config.StaticConfig.Paths.ConfigPath + "/server/" + server.Id);
+
             string path = GetAbsolutePath(server);
 
             try

@@ -71,11 +71,12 @@ namespace TheGuin3.Interfaces.Base
                     ArgsUser = user;
                     ArgsUserArgs = new List<string>();
                     ArgsUserArgsString = "";
-                    Channel = channel;
-                    Server = server;
-                    User = user;
                     IsCommand = false;
                 }
+
+                Channel = channel;
+                Server = server;
+                User = user;
             }
 
             public User User;
