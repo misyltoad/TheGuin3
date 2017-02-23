@@ -7,6 +7,8 @@ namespace TheGuin3.Interfaces.Discord
 {
     public class Embed
     {
+        public string InterfaceName => Meta.InterfaceName;
+
         public Embed()
         {
             Sections = new List<Section>();

@@ -8,6 +8,8 @@ namespace TheGuin3.Interfaces.Discord
 {
     class Role : Base.Role
     {
+        public override string InterfaceName => Meta.InterfaceName;
+
         public Role(SocketRole discordInterface)
         {
             DiscordInterface = discordInterface;

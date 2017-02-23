@@ -8,10 +8,15 @@ namespace TheGuin3.Interfaces.Discord
 {
     public class Server : Base.Server
     {
+        public override string InterfaceName => Meta.InterfaceName;
+
         public Server(SocketGuild discordInterface)
         {
             DiscordInterface = discordInterface;
         }
+
+        public override string Id => DiscordInterface.Id.ToString();
+        public override string Name => DiscordInterface.Name;
 
         public override List<Base.TextChannel> TextChannels
         {
@@ -37,6 +42,20 @@ namespace TheGuin3.Interfaces.Discord
                 }
 
                 return users;
+            }
+        }
+
+        public override List<Base.Role> Roles
+        {
+            get
+            {
+                List<Base.Role> roles = new List<Base.Role>();
+                foreach (var role in DiscordInterface.Roles)
+                {
+                    roles.Add(new Discord.Role(role));
+                }
+
+                return roles;
             }
         }
 

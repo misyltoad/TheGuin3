@@ -6,6 +6,11 @@ namespace TheGuin3.Interfaces.Base
 {
     public abstract class Server
     {
+        public abstract string InterfaceName { get; }
+
+        public abstract string Name { get; }
+        public abstract string Id { get; }
+
         public abstract List<TextChannel> TextChannels { get; }
         public abstract List<User> Users { get; }
 
@@ -13,6 +18,8 @@ namespace TheGuin3.Interfaces.Base
         public abstract void BanUser(User user, int days);
 
         public abstract User Owner { get; }
+
+        public abstract List<Role> Roles { get; }
 
         public Role FindRole(string name)
         {
@@ -42,7 +49,7 @@ namespace TheGuin3.Interfaces.Base
 
             foreach (var role in Roles)
             {
-                if (name.ToLower().IndexOf(role.Name.ToLower()) != -1)
+                if (role.Name.ToLower().IndexOf(name.ToLower()) != -1)
                     return role;
             }
 
@@ -85,13 +92,13 @@ namespace TheGuin3.Interfaces.Base
 
             foreach (var role in TextChannels)
             {
-                if (name.IndexOf(role.Name) != -1)
+                if (role.Name.IndexOf(name) != -1)
                     return role;
             }
 
             foreach (var role in TextChannels)
             {
-                if (name.ToLower().IndexOf(role.Name.ToLower()) != -1)
+                if (role.Name.ToLower().IndexOf(name.ToLower()) != -1)
                     return role;
             }
 

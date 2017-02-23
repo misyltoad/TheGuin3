@@ -9,6 +9,8 @@ namespace TheGuin3.Interfaces.Discord
 {
     public class TextChannel : Base.TextChannel
     {
+        public override string InterfaceName => Meta.InterfaceName;
+
         // Creation Stuff
 
         public TextChannel(SocketTextChannel discordInterface)

@@ -8,6 +8,8 @@ namespace TheGuin3.Interfaces.Discord
 {
     public class Message : Base.Message
     {
+        public string InterfaceName => Meta.InterfaceName;
+
         public Message(string value)
             : base(value)
         { }

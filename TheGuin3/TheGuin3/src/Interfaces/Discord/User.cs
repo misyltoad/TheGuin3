@@ -6,11 +6,14 @@ using System.Net.Http;
 using Discord;
 using System.IO;
 using Discord.WebSocket;
+using System.Threading.Tasks;
 
 namespace TheGuin3.Interfaces.Discord
 {
     class User : Base.User
     {
+        public override string InterfaceName => Meta.InterfaceName;
+
         // Creation Stuff
 
         public User(SocketUser discordInterface)

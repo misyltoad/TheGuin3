@@ -7,6 +7,8 @@ namespace TheGuin3.Interfaces.Base
 {
     public abstract class User
     {
+        public abstract string InterfaceName { get; }
+
         public abstract string Nickname { get; }
         public abstract string Username { get; }
         public abstract string Tag { get; }

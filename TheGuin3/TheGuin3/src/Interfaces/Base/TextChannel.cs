@@ -7,6 +7,8 @@ namespace TheGuin3.Interfaces.Base
 {
     public abstract class TextChannel
     {
+        public abstract string InterfaceName { get; }
+
         public abstract void SendMessage(Message message);
         public abstract void SendFile(string filename);
         public abstract void SendFile(Stream stream, string fakeFilename);
