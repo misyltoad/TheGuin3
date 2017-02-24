@@ -24,16 +24,6 @@ namespace TheGuin3.Interfaces.Base
 
         public abstract void Init();
 
-        public void OnPublicMessageRecieved(User user, TextChannel channel, Server server, string content)
-        {
-            Context context = new Context(user, channel, server, content, this);
-            
-            if (context.IsCommand)
-            {
-                ExecuteHook<OnCommand>(server, context);
-            }
-        }
-
         public List<Type> GetAllTypesWithAttributeInAvailableModules<T>(Server server) where T : System.Attribute
         {
             List<Type> types = new List<Type>();
@@ -75,6 +65,17 @@ namespace TheGuin3.Interfaces.Base
 
         public Module.ModuleRegistry ModuleRegistry;
 
+
+        public void OnPublicMessageRecieved(User user, TextChannel channel, Server server, string content)
+        {
+            Context context = new Context(user, channel, server, content, this);
+
+            if (context.IsCommand)
+            {
+                ExecuteHook<OnCommand>(server, context);
+            }
+        }
+
         public void OnPrivateMessageRecieved(User user, string content)
         {
             /*Context context = new Context(user, , content);
@@ -83,6 +84,32 @@ namespace TheGuin3.Interfaces.Base
             {
                 ExecuteHook(typeof(OnCommand), server, context);
             }*/
+        }
+
+        public void OnUserJoined(User user, Server server)
+        {
+            ExecuteHook<OnUserJoined>(server, server, user);
+        }
+
+        public void OnUserLeft(User user, Server server)
+        {
+            ExecuteHook<OnUserLeft>(server, server, user);
+        }
+
+        public void OnUserBanned(User user, Server server)
+        {
+            ExecuteHook<OnUserBanned>(server, server, user);
+        }
+
+        public void OnUserUnbanned(User user, Server server)
+        {
+            ExecuteHook<OnUserUnbanned>(server, server, user);
+        }
+
+        public void OnUserChange(User oldUser, User newUser)
+        {
+            if (newUser.Server != null)
+                ExecuteHook<OnUserChange>(newUser.Server, newUser.Server, oldUser, newUser);
         }
     }
 }

@@ -84,12 +84,16 @@ namespace TheGuin3.Module
 
             foreach (var diagnostic in result.Diagnostics)
             {
-                Console.WriteLine("({0}) {1} in {2} at {3}: {4}", 
-                    diagnostic.Id, 
-                    diagnostic.Severity == DiagnosticSeverity.Error ? "Error" : diagnostic.Severity == DiagnosticSeverity.Warning ? "Warning" : "Info", 
-                    diagnostic.Location.SourceTree.FilePath,
-                    diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).StartLinePosition.Line, 
-                    diagnostic.GetMessage());
+                // Random info spams console.
+                if (diagnostic.Severity == DiagnosticSeverity.Error)
+                {
+                    Console.WriteLine("({0}) {1} in {2} at {3}: {4}",
+                        diagnostic.Id,
+                        diagnostic.Severity == DiagnosticSeverity.Error ? "Error" : diagnostic.Severity == DiagnosticSeverity.Warning ? "Warning" : "Info",
+                        diagnostic.Location.SourceTree.FilePath,
+                        diagnostic.Location.SourceTree.GetLineSpan(diagnostic.Location.SourceSpan).StartLinePosition.Line,
+                        diagnostic.GetMessage());
+                }
             }
 
             if (result.Success)

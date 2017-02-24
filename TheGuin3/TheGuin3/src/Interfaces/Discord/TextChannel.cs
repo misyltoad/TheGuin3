@@ -58,8 +58,8 @@ namespace TheGuin3.Interfaces.Discord
             }
         }
         public override Base.Server Server => new Discord.Server((DiscordInterface as SocketGuildChannel)?.Guild);
-        public override string Name { get; }
-        public override string Id { get; }
+        public override string Name => DiscordInterface.Name;
+        public override string Id => DiscordInterface.Id.ToString();
 
         private SocketTextChannel DiscordInterface;
     }

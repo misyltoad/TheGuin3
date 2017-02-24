@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TheGuin3.Interfaces.Discord
 {
-    class User : Base.User
+    public class User : Base.User
     {
         public override string InterfaceName => Meta.InterfaceName;
 
@@ -29,14 +29,14 @@ namespace TheGuin3.Interfaces.Discord
         public override string HumanTag => String.Format("@{0}#{1}", Username, Discriminator);
         public override string DataString => String.Format("``{0}`` (``{1}``|``{2}``)", Tag, HumanTag, Nickname);
         public override string Id => DiscordInterface.Id.ToString();
-        public override string AvatarUrl => DiscordInterface.AvatarUrl;
+        public override string AvatarUrl => DiscordInterface.GetAvatarUrl();
         public override Bitmap Avatar
         {
             get
             {
                 try
                 {
-                    byte[] imageContent = new HttpClient().GetAsync(DiscordInterface.AvatarUrl).GetAwaiter().GetResult().Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+                    byte[] imageContent = new HttpClient().GetAsync(DiscordInterface.GetAvatarUrl()).GetAwaiter().GetResult().Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
                     if (imageContent != null)
                     {
                         var image = System.Drawing.Image.FromStream(new MemoryStream(imageContent));

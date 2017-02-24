@@ -77,31 +77,31 @@ namespace TheGuin3.Interfaces.Base
             if (String.IsNullOrWhiteSpace(name))
                 return null;
 
-            foreach (var role in TextChannels)
+            foreach (var channel in TextChannels)
             {
-                if (name == role.Id)
-                    return role;
+                if (name == channel.Id)
+                    return channel;
 
-                if (name == role.Name)
-                    return role;
+                if (name == channel.Name)
+                    return channel;
             }
 
-            foreach (var role in TextChannels)
+            foreach (var channel in TextChannels)
             {
-                if (name.ToLower() == role.Name.ToLower())
-                    return role;
+                if (channel.Name != null && name.ToLower() == channel.Name.ToLower())
+                    return channel;
             }
 
-            foreach (var role in TextChannels)
+            foreach (var channel in TextChannels)
             {
-                if (role.Name.IndexOf(name) != -1)
-                    return role;
+                if (channel.Name != null && channel.Name.IndexOf(name) != -1)
+                    return channel;
             }
 
-            foreach (var role in TextChannels)
+            foreach (var channel in TextChannels)
             {
-                if (role.Name.ToLower().IndexOf(name.ToLower()) != -1)
-                    return role;
+                if (channel.Name != null && channel.Name.ToLower().IndexOf(name.ToLower()) != -1)
+                    return channel;
             }
 
             return null;

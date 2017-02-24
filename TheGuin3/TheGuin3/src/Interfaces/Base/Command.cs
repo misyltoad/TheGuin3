@@ -10,6 +10,7 @@ namespace TheGuin3.Interfaces.Base
         public Command(Context context)
         {
             Context = context;
+
             OnCommand[] attributes = (OnCommand[]) (GetType().GetTypeInfo().GetCustomAttributes(typeof(OnCommand), true));
             bool canContinue = false;
             foreach (var attribute in attributes)

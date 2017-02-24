@@ -48,6 +48,42 @@ namespace TheGuin3.Interfaces.Discord
 
                 return null;
             };
+
+            DiscordInterface.UserJoined += (user) =>
+            {
+                OnUserJoined(new Discord.User(user), new Discord.Server(user.Guild));
+                return null;
+            };
+
+            DiscordInterface.UserBanned += (user, server) =>
+            {
+                OnUserBanned(new Discord.User(user), new Discord.Server(server));
+                return null;
+            };
+
+            DiscordInterface.UserLeft += (user) =>
+            {
+                OnUserLeft(new Discord.User(user), new Discord.Server(user.Guild));
+                return null;
+            };
+
+            DiscordInterface.UserUnbanned += (user, server) =>
+            {
+                OnUserUnbanned(new Discord.User(user), new Discord.Server(server));
+                return null;
+            };
+
+            DiscordInterface.GuildMemberUpdated += (oldUser, newUser) =>
+            {
+                OnUserChange(new Discord.User(oldUser), new Discord.User(newUser));
+                return null;
+            };
+
+            /*DiscordInterface.UserUpdated += (oldUser, newUser) =>
+            {
+                OnUserChange(new Discord.User(oldUser), new Discord.User(newUser));
+                return null;
+            };*/
         }
 
         public override void Stop()
