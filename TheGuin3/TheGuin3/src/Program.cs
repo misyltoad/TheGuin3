@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 
 namespace TheGuin3
 {
@@ -19,7 +20,12 @@ namespace TheGuin3
             }
 
             while (true)
-            { }
+            {
+                Thread.Sleep(3000);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+            }
         }
     }
 }

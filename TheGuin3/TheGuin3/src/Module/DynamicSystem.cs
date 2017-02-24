@@ -14,7 +14,6 @@ namespace TheGuin3.Module
 {
     class DynamicSystem
     {
-
         public DynamicSystem(Module module)
         {
             try
@@ -49,14 +48,16 @@ namespace TheGuin3.Module
             foreach (var path in paths)
             {
                 string code = "";
-                try
+                while (true)
                 {
-                    code = File.ReadAllText(path);
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                    return;
+                    try
+                    {
+                        code = File.ReadAllText(path);
+                        break;
+                    }
+                    catch (Exception e)
+                    {
+                    }
                 }
 
                 var relativePath = "";
@@ -91,16 +92,21 @@ namespace TheGuin3.Module
                     diagnostic.GetMessage());
             }
 
-            if (!result.Success)
-                return;
+            if (result.Success)
+            {
+                ms.Seek(0, SeekOrigin.Begin);
+                Assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+            }
 
-            ms.Seek(0, SeekOrigin.Begin);
-            Assembly = AssemblyLoadContext.Default.LoadFromStream(ms);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
 
         private Type[] Dependencies => new Type[]
         {
             typeof(object),
+            typeof(System.Collections.IList),
             typeof(System.Drawing.Image),
             typeof(System.Net.Http.HttpClient),
         };
@@ -122,8 +128,16 @@ namespace TheGuin3.Module
 
                 var dd = typeof(Enumerable).GetTypeInfo().Assembly.Location;
                 var coreDir = Directory.GetParent(dd);
-                references.Add(MetadataReference.CreateFromFile(coreDir.FullName + Path.DirectorySeparatorChar + "mscorlib.dll"));
-                references.Add(MetadataReference.CreateFromFile(coreDir.FullName + Path.DirectorySeparatorChar + "System.Runtime.dll"));
+
+                string[] files = Directory.GetFiles(coreDir.FullName);
+
+                foreach (var file in files)
+                {
+                    if ((Path.GetFileName(file) == "mscorlib.dll" || Path.GetFileName(file).Substring(0, "System".Length) == "System") && Path.GetExtension(file) == ".dll")
+                    {
+                        references.Add(MetadataReference.CreateFromFile(file));
+                    }
+                }
 
                 return references.ToArray();
             }

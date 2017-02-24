@@ -15,6 +15,7 @@ namespace TheGuin3.Interfaces.Base
         public abstract string HumanTag { get; }
         public abstract string Id { get; }
         public abstract string DataString { get; }
+        public abstract string AvatarUrl { get; }
         public abstract Bitmap Avatar { get; }
 
         public abstract List<Role> Roles { get; }
@@ -23,7 +24,7 @@ namespace TheGuin3.Interfaces.Base
         public abstract void SendMessage(Message message);
         public bool IsServerOwner => Id == (Server?.Owner.Id ?? "");
         public abstract Server Server { get; }
-        public bool IsBotOwner => false; // TODO this!
+        public abstract bool IsBotOwner { get; }
 
         public bool IsAdmin
         {

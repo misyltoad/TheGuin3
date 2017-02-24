@@ -7,7 +7,10 @@ namespace TheGuin3.Modules.Core
     [OnCommand("ping", "Pings back!")]
     class PingCommand : TheGuin3.Interfaces.Base.Command
     {
-        public PingCommand(TheGuin3.Interfaces.Base.Command.Context Context)
+        public PingCommand(Context context) : base (context)
+		{}
+		
+		protected override void Execute()
         {
 			if (Context.Channel != null)
 				Context.Channel.SendMessage("Pong!");

@@ -17,6 +17,7 @@ namespace TheGuin3.Interfaces.Discord
 
         public override string Id => DiscordInterface.Id.ToString();
         public override string Name => DiscordInterface.Name;
+        public override string AvatarUrl => DiscordInterface.IconUrl;
 
         public override List<Base.TextChannel> TextChannels
         {

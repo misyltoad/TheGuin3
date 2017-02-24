@@ -11,6 +11,8 @@ namespace TheGuin3.Interfaces.Discord
 
         public Embed()
         {
+            Author = new AuthorData();
+            Footer = new FooterData();
             Sections = new List<Section>();
         }
 

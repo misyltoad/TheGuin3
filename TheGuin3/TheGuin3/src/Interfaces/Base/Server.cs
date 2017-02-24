@@ -17,6 +17,8 @@ namespace TheGuin3.Interfaces.Base
         public abstract void KickUser(User user);
         public abstract void BanUser(User user, int days);
 
+        public abstract string AvatarUrl { get; }
+
         public abstract User Owner { get; }
 
         public abstract List<Role> Roles { get; }

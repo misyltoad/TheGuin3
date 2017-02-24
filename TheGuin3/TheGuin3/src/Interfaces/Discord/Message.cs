@@ -19,28 +19,47 @@ namespace TheGuin3.Interfaces.Discord
             DiscordInterface = new EmbedBuilder();
             var builder = DiscordInterface;
 
-            builder.Author.Name = embed.Author.Name;
-            builder.Author.IconUrl = embed.Author.IconUrl;
-            builder.Author.Url = embed.Author.HyperlinkUrl;
+            if (!String.IsNullOrWhiteSpace(embed.Author.HyperlinkUrl) ||
+                !String.IsNullOrWhiteSpace(embed.Author.IconUrl) ||
+                !String.IsNullOrWhiteSpace(embed.Author.Name))
+            {
+                EmbedAuthorBuilder authorBuilder = new EmbedAuthorBuilder();
+                try { authorBuilder.IconUrl = embed.Author.IconUrl; } catch { }
+                try { authorBuilder.Name = embed.Author.Name; } catch { }
+                try { authorBuilder.Url = embed.Author.HyperlinkUrl; } catch { }
+                builder.Author = authorBuilder;
+            }
 
-            builder.Url = embed.HyperlinkUrl;
-            builder.ThumbnailUrl = embed.ThumbnailUrl;
-            builder.ImageUrl = embed.ImageUrl;
+            if (!String.IsNullOrWhiteSpace(embed.Footer.IconUrl) ||
+                !String.IsNullOrWhiteSpace(embed.Footer.Text))
+            {
+                EmbedFooterBuilder footerBuilder = new EmbedFooterBuilder();
+                try { footerBuilder.IconUrl = embed.Footer.IconUrl; } catch { }
+                try { footerBuilder.Text = embed.Footer.Text; } catch { }
+                builder.Footer = footerBuilder;
+            }
 
-            builder.Timestamp = embed.Timestamp;
+            try { builder.Url = embed.HyperlinkUrl; } catch { }
+            try { builder.ThumbnailUrl = embed.ThumbnailUrl; } catch { }
+            try { builder.ImageUrl = embed.ImageUrl; } catch { }
 
-            Color color = new Color(embed.Colour.Value.R, embed.Colour.Value.G, embed.Colour.Value.B);
+            try { builder.Timestamp = embed.Timestamp; } catch { }
 
-            builder.Color = color;
-            builder.Footer.IconUrl = embed.Footer.IconUrl;
-            builder.Footer.Text = embed.Footer.Text;
+            Color color = new Color();
+            try { color = new Color(embed.Colour.Value.R, embed.Colour.Value.G, embed.Colour.Value.B); } catch { }
+
+            try { builder.Color = color; } catch { }
+            try { builder.Footer.IconUrl = embed.Footer.IconUrl; } catch { }
+            try { builder.Footer.Text = embed.Footer.Text; } catch { }
 
             foreach (var section in embed.Sections)
             {
                 EmbedFieldBuilder fieldBuilder = new EmbedFieldBuilder();
-                fieldBuilder.IsInline = section.IsInline;
-                fieldBuilder.Name = section.Name;
-                fieldBuilder.Value = section.Value;
+                try { fieldBuilder.IsInline = section.IsInline; } catch { }
+                try { fieldBuilder.Name = section.Name; } catch { }
+                try { fieldBuilder.Value = section.Value; } catch { }
+
+                DiscordInterface.AddField(fieldBuilder);
             }
         }
 

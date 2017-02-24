@@ -26,17 +26,17 @@ namespace TheGuin3.Interfaces.Base
 
         public void OnPublicMessageRecieved(User user, TextChannel channel, Server server, string content)
         {
-            Command.Context context = new Command.Context(user, channel, server, content);
+            Context context = new Context(user, channel, server, content, this);
             
             if (context.IsCommand)
             {
-                ExecuteHook(typeof(OnCommand), server, context);
-                return;
+                ExecuteHook<OnCommand>(server, context);
             }
         }
 
-        private void ExecuteHook(Type hook, Server server, params object[] arguments)
+        public List<Type> GetAllTypesWithAttributeInAvailableModules<T>(Server server) where T : System.Attribute
         {
+            List<Type> types = new List<Type>();
             var availableModules = Config.Schema.ModuleListConfig.Get(server).Modules;
 
             foreach (var module in ModuleRegistry.Modules)
@@ -54,19 +54,35 @@ namespace TheGuin3.Interfaces.Base
                     {
                         foreach (var type in module.Assembly.GetTypes())
                         {
-                            object[] attributes = (object[])type.GetTypeInfo().GetCustomAttributes(hook, true);
+                            T[] attributes = (T[])type.GetTypeInfo().GetCustomAttributes(typeof(T), true);
                             if (attributes.Length > 0)
-                                Activator.CreateInstance(type, arguments);
+                                types.Add(type);
                         }
                     }
                 }
             }
+
+            return types;
         }
 
-        Module.ModuleRegistry ModuleRegistry;
+        private void ExecuteHook<T>(Server server, params object[] arguments) where T : System.Attribute
+        {
+            foreach (var type in GetAllTypesWithAttributeInAvailableModules<T>(server))
+            {
+                Activator.CreateInstance(type, arguments);
+            }
+        }
+
+        public Module.ModuleRegistry ModuleRegistry;
 
         public void OnPrivateMessageRecieved(User user, string content)
         {
+            /*Context context = new Context(user, , content);
+
+            if (context.IsCommand)
+            {
+                ExecuteHook(typeof(OnCommand), server, context);
+            }*/
         }
     }
 }

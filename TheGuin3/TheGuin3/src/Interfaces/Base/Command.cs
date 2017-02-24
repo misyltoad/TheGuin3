@@ -1,98 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace TheGuin3.Interfaces.Base
 {
     public abstract class Command
     {
-        public class Context
+        public Command(Context context)
         {
-            public Context(User user, TextChannel channel, Server server, Message message)
+            Context = context;
+            OnCommand[] attributes = (OnCommand[]) (GetType().GetTypeInfo().GetCustomAttributes(typeof(OnCommand), true));
+            bool canContinue = false;
+            foreach (var attribute in attributes)
             {
-                Message = message;
-                MessageString = message;
-
-                string prefix = Config.Schema.BotConfig.Get().CommandPrefix;
-
-                if (MessageString.Length >= prefix.Length && MessageString.Substring(0, prefix.Length) == prefix)
+                if (attribute.Name.ToLower() == Context.CommandName.ToLower())
                 {
-                    IsCommand = true;
-                    int indexOfFirstSpace = MessageString.IndexOf(' ');
-
-                    if (indexOfFirstSpace != -1 && indexOfFirstSpace + 1 < MessageString.Length)
-                        ArgsString = MessageString.Substring(MessageString.IndexOf(' ') + 1);
-
-                    int commandPrefixEnd = indexOfFirstSpace;
-
-                    if (commandPrefixEnd == -1)
-                        commandPrefixEnd = MessageString.Length;
-
-                    CommandName = MessageString.Substring(prefix.Length, commandPrefixEnd - prefix.Length);
-
-                    if (ArgsString != null)
-                        Args = new List<string>(ArgsString.Split(' '));
+                    if ((!attribute.AdminOnly || (attribute.AdminOnly && Context.User.IsAdmin)))
+                        canContinue = true;
                     else
-                    {
-                        Args = new List<string>();
-                        ArgsString = "";
-                    }
-
-                    for (int i = Args.Count; i >= 0; i--)
-                    {
-                        if (server != null)
-                        {
-                            List<string> argsList = new List<string>(Args);
-                            argsList.RemoveRange(i, argsList.Count - i);
-                            ArgsUser = server.FindUser(String.Join(" ", argsList));
-
-                            if (ArgsUser != null)
-                            {
-                                List<string> remainingArgsList = new List<string>(Args);
-                                remainingArgsList.RemoveRange(0, i);
-                                ArgsUserArgs = remainingArgsList;
-                                ArgsUserArgsString = String.Join(" ", remainingArgsList);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (ArgsUser == null)
-                    {
-                        ArgsUser = user;
-                        ArgsUserArgs = new List<string>();
-                    }
+                        Context.Channel.SendMessage(String.Format("You can't do that, {0}!", Context.User.Nickname));
                 }
-                else
-                {
-                    CommandName = "";
-                    Args = new List<string>();
-                    ArgsString = "";
-                    ArgsUser = user;
-                    ArgsUserArgs = new List<string>();
-                    ArgsUserArgsString = "";
-                    IsCommand = false;
-                }
-
-                Channel = channel;
-                Server = server;
-                User = user;
             }
 
-            public User User;
-            public TextChannel Channel;
-            public Server Server;
-            public string MessageString;
-            public Message Message;
+            try
+            {
+                if (canContinue)
+                    Execute();
+            } catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
 
-            public bool IsCommand;
-            public string CommandName;
+        protected Context Context;
 
-            public List<string> Args;
-            public string ArgsString;
-            public User ArgsUser;
-            public List<string> ArgsUserArgs;
-            public string ArgsUserArgsString;
-        };
+        protected abstract void Execute();
     }
 }

@@ -29,6 +29,7 @@ namespace TheGuin3.Interfaces.Discord
         public override string HumanTag => String.Format("@{0}#{1}", Username, Discriminator);
         public override string DataString => String.Format("``{0}`` (``{1}``|``{2}``)", Tag, HumanTag, Nickname);
         public override string Id => DiscordInterface.Id.ToString();
+        public override string AvatarUrl => DiscordInterface.AvatarUrl;
         public override Bitmap Avatar
         {
             get
@@ -61,8 +62,10 @@ namespace TheGuin3.Interfaces.Discord
                     List<Base.Role> roles = new List<Base.Role>();
                     foreach (var role in guildUser.Roles)
                         roles.Add(new Discord.Role(role));
+
+                    return roles;
                 }
-                return null;
+                return new List<Base.Role>(); ;
             }
         }
 
@@ -102,6 +105,8 @@ namespace TheGuin3.Interfaces.Discord
                 return null;
             }
         }
+
+        public override bool IsBotOwner => Id == Config.Schema.DiscordConfig.Get().OwnerId.ToString();
 
         // Discord Only
 
