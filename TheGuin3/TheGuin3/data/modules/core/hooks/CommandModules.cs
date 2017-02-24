@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
@@ -46,7 +46,7 @@ namespace TheGuin3.Modules.Core
 				
 				foreach (var module in availableModules)
 				{
-					output += String.Format("• {0} {1}\n", module, !currentModules.Contains(module) ? "❌" : module == "core" ? "✅ [Required]" : "✅");
+					output += String.Format("{0} {1}{2}\n", currentModules.Contains(module) ? "✅" : "❌",  module, module == "core" ? " [Required]" : "");
 				}
 				
 				Embed.Section section = new Embed.Section();
