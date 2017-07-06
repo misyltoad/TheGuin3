@@ -41,48 +41,53 @@ namespace TheGuin3.Interfaces.Base
         }
         public void PlayFile(string filename)
         {
-            Process currentProcess = null;
-            if (CachedProcesses.TryGetValue(Id, out currentProcess) && currentProcess != null)
+            List<Process> serverProcesses = null;
+            if (CachedProcesses.TryGetValue(Id, out serverProcesses) && serverProcesses != null)
             {
-                try
+
+                foreach (Process process in serverProcesses)
                 {
-                    CachedProcesses.Remove(Id);
-                    currentProcess.Kill();
-                    currentProcess.WaitForExit();
+                    try
+                    {
+                        process.Kill();
+                        process.WaitForExit();
+                    }
+                    catch
+                    {
+                        // Process was lost or some crap.
+                        // Doesn't matter.
+                    }
                 }
-                catch { }
+                CachedProcesses.Remove(Id);
             }
 
             try
             {
-                Process process = null;
-                string[] files = null;
-                if (filename.Contains("youtube"))
+                bool isYoutube = filename.Contains("//youtube") || filename.Contains("//youtu.be") || filename.Contains("//www.youtube") || filename.Contains("//www.youtu.be");
+                if (isYoutube)
                 {
-                    Directory.CreateDirectory("data");
-                    Directory.CreateDirectory("data/temp");
-                    Directory.CreateDirectory("data/temp/youtube");
+                    Process youtubedlProcess = Audio.Stream.MakeYoutubeProcess(filename);
+                    Process ffmpegProcess = Audio.Stream.MakeAudioProcess("-");
 
-                    string basePath = "data/temp/youtube";
-                    string name = String.Format("YOUTUBE_VIDEO_{0}", CountId.ToString());
-                    string path = String.Format("{0}/{1}", basePath, name);
-                    CountId++;
+                    List<Process> processes = new List<Process>();
+                    processes.Add(youtubedlProcess);
+                    processes.Add(ffmpegProcess);
 
-                    process = Audio.Stream.MakeYoutubeProcess(filename, path);
-                    process.WaitForExit();
+                    CachedProcesses.Add(Id, processes);
 
-                    files = Directory.GetFiles(basePath, $"{name}.*");
-                    if (files.Length > 0)
-                        process = Audio.Stream.MakeAudioProcess(files[0]);
+                    Audio.Stream.CopyStreamAsync(youtubedlProcess.StandardOutput.BaseStream, ffmpegProcess.StandardInput.BaseStream);
+                    Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
                 }
                 else
-                    process = Audio.Stream.MakeAudioProcess(filename);
+                {
+                    Process ffmpegProcess = Audio.Stream.MakeAudioProcess(filename);
 
-                CachedProcesses.Add(Id, process);
-                Audio.Stream.CopyStreamAsync(process.StandardOutput.BaseStream, AudioStream).Wait();
+                    List<Process> processes = new List<Process>();
+                    processes.Add(ffmpegProcess);
+                    CachedProcesses.Add(Id, processes);
 
-                if (files != null)
-                    DeleteFiles(files);
+                    Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
+                }
             }
             catch (Exception e)
             {
@@ -90,11 +95,9 @@ namespace TheGuin3.Interfaces.Base
             }
         }
 
-        public static int CountId = 0;
-
         public abstract Stream AudioStream { get; }
         public abstract string Id { get; }
 
-        public static Dictionary<string, Process> CachedProcesses = new Dictionary<string, Process>();
+        public static Dictionary<string, List<Process>> CachedProcesses = new Dictionary<string, List<Process>>();
     }
 }

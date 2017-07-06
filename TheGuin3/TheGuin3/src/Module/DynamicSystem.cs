@@ -55,7 +55,7 @@ namespace TheGuin3.Module
                         code = File.ReadAllText(path);
                         break;
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                     }
                 }

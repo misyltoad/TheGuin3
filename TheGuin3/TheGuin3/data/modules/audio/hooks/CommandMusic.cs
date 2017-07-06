@@ -54,12 +54,24 @@ namespace TheGuin3.Modules.Audio
 					// Start playing queue if we are the starter of the queue.
 					// Become the queue handler for this server.
 					VideoQueueMutex.WaitOne();
-					QueueData newData = VideoQueues[Context.Server.Id][0];
+					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
+					if (!isCountGreater)
+					{
+						VideoQueueMutex.ReleaseMutex();
+						return;
+					}
+					string url = VideoQueues[Context.Server.Id][0].url;
 					VideoQueueMutex.ReleaseMutex();
 					
-					audioChannel.PlayFile(newData.url);
+					audioChannel.PlayFile(url);
 					
 					VideoQueueMutex.WaitOne();
+					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
+					if (!isCountGreater)
+					{
+						VideoQueueMutex.ReleaseMutex();	
+						return;
+					}
 					VideoQueues[Context.Server.Id].RemoveAt(0);
 					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
 					VideoQueueMutex.ReleaseMutex();

@@ -54,9 +54,6 @@ namespace TheGuin3.Interfaces.Discord
                        var user = new Discord.User(msg.Author);
                        OnPrivateMessageRecieved(user, msg.Content);
                    }
-
-                   if (socketChannel?.Id == 330510635274338305)
-                       DiscordInterface?.GetUser(197474085414895616)?.GetOrCreateDMChannelAsync().Result?.SendMessageAsync("hey edo check memes", true);
                 });
                 return null;
             };

@@ -16,17 +16,19 @@ namespace TheGuin3.Audio
                 FileName = "ffmpeg",
                 Arguments = $"-i {path} -ac 2 -f s16le -ar 48000 pipe:1",
                 UseShellExecute = false,
+                RedirectStandardInput = true,
                 RedirectStandardOutput = true,
             };
             return Process.Start(ffmpeg);
         }
 
-        static public Process MakeYoutubeProcess(string path, string name)
+        static public Process MakeYoutubeProcess(string address)
         {
             var ffmpeg = new ProcessStartInfo
             {
                 FileName = "youtube-dl",
-                Arguments = $"--extract-audio --output \"{name}.%(ext)s\" {path}",
+                //Arguments = $"--extract-audio --output \"{name}.%(ext)s\" {path}",
+                Arguments = $"{address} -o -",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             };

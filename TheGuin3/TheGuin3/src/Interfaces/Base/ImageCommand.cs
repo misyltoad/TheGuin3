@@ -39,7 +39,7 @@ namespace TheGuin3.Interfaces.Base
                 image.SaveAsPng(editedStream);
                 Context.Channel.SendFile(new MemoryStream(editedStream.ToArray()), "GeneratedImage.png");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 Context.Channel.SendMessage("Unable to get image from URL.");
             }
