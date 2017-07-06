@@ -39,7 +39,7 @@ namespace TheGuin3.Interfaces.Base
                 DeleteFile(file);
             }
         }
-        public void PlayFile(string filename)
+        public Task PlayFile(string filename)
         {
             List<Process> serverProcesses = null;
             if (CachedProcesses.TryGetValue(Id, out serverProcesses) && serverProcesses != null)
@@ -50,7 +50,6 @@ namespace TheGuin3.Interfaces.Base
                     try
                     {
                         process.Kill();
-                        process.WaitForExit();
                     }
                     catch
                     {
@@ -76,7 +75,29 @@ namespace TheGuin3.Interfaces.Base
                     CachedProcesses.Add(Id, processes);
 
                     Audio.Stream.CopyStreamAsync(youtubedlProcess.StandardOutput.BaseStream, ffmpegProcess.StandardInput.BaseStream);
-                    Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
+                    Task.Run(() =>
+                   {
+                       try
+                       {
+                           youtubedlProcess.WaitForExit();
+                       }
+                       catch
+                       {
+
+                       }
+
+                       Thread.Sleep(3500);
+
+                       try
+                       {
+                           ffmpegProcess.Kill();
+                       }
+                       catch
+                       {
+
+                       }
+                   });
+                    return Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
                 }
                 else
                 {
@@ -86,12 +107,13 @@ namespace TheGuin3.Interfaces.Base
                     processes.Add(ffmpegProcess);
                     CachedProcesses.Add(Id, processes);
 
-                    Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
+                    return Audio.Stream.CopyStreamAsync(ffmpegProcess.StandardOutput.BaseStream, AudioStream);
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine("FAILED TO COPY STREAM ASYNC! {0}", e.Message);
+                return Task.FromResult<object>(null);
             }
         }
 

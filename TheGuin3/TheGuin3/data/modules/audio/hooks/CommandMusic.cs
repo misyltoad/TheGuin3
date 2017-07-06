@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using TheGuin3;
 using TheGuin3.Interfaces;
 
@@ -12,9 +13,14 @@ namespace TheGuin3.Modules.Audio
         public QueueCommand(Context context) : base (context)
 		{}
 		
-		public struct QueueData
+		public class QueueData
 		{
 			public string url;
+		}
+		
+		public bool IsQueueEmpty()
+		{
+			return VideoQueues[Context.Server.Id] == null || VideoQueues[Context.Server.Id].Count < 1;
 		}
 		
 		public override void Execute()
@@ -25,8 +31,7 @@ namespace TheGuin3.Modules.Audio
 				Context.Channel.SendMessage("You need to be in a voice channel for me to join!");
 				return;
 			}
-		
-			VideoQueueMutex.WaitOne();		
+			
 			if (!VideoQueues.ContainsKey(Context.Server.Id))
 				VideoQueues[Context.Server.Id] = new List<QueueData>();
 				
@@ -34,53 +39,73 @@ namespace TheGuin3.Modules.Audio
 			data.url = Context.ArgsString;
 		
 			VideoQueues[Context.Server.Id].Add(data);
-			VideoQueueMutex.ReleaseMutex();
 			
 			Context.Channel.SendMessage("Added to queue.");
 			
-			VideoQueueMutex.WaitOne();
 			var areWeFirst = VideoQueues[Context.Server.Id].Count == 1;
-			VideoQueueMutex.ReleaseMutex();
 			
 			if (areWeFirst)
 			{
 				audioChannel.Join();
 				
-				VideoQueueMutex.WaitOne();
-				var isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
-				VideoQueueMutex.ReleaseMutex();
-				while (isCountGreater)
+				while (!IsQueueEmpty())
 				{
 					// Start playing queue if we are the starter of the queue.
 					// Become the queue handler for this server.
-					VideoQueueMutex.WaitOne();
-					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
-					if (!isCountGreater)
-					{
-						VideoQueueMutex.ReleaseMutex();
-						return;
-					}
-					string url = VideoQueues[Context.Server.Id][0].url;
-					VideoQueueMutex.ReleaseMutex();
+
+					string url = null;
+					List<QueueData> queue = null;
 					
-					audioChannel.PlayFile(url);
+					VideoQueues.TryGetValue(Context.Server.Id, out queue);
 					
-					VideoQueueMutex.WaitOne();
-					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
-					if (!isCountGreater)
+					if (queue != null)
 					{
-						VideoQueueMutex.ReleaseMutex();	
-						return;
+						if (queue.Count != 0)
+						{
+							QueueData currentVideoData = queue[0];
+							if (currentVideoData != null)
+								url = currentVideoData.url;
+						}	
 					}
-					VideoQueues[Context.Server.Id].RemoveAt(0);
-					isCountGreater = VideoQueues[Context.Server.Id].Count > 0;
-					VideoQueueMutex.ReleaseMutex();
+					
+					if (url != null && !String.IsNullOrEmpty(url))
+					{
+						audioChannel.PlayFile(url).Wait();
+						queue.RemoveAt(0);
+					}
 				}
 			}
 		}
 		
-		public static Mutex VideoQueueMutex = new Mutex();
-		public static Dictionary<string, List<QueueData>> VideoQueues = new Dictionary<string, List<QueueData>>();
+		public static ConcurrentDictionary<string, List<QueueData>> VideoQueues = new ConcurrentDictionary<string, List<QueueData>>();
+    }
+	
+		
+	[OnCommand("clearqueue", "Clears the queue for this server.")]
+    class ClearQueueCommand : TheGuin3.Interfaces.Base.Command
+    {
+        public ClearQueueCommand(Context context) : base (context)
+		{}
+		
+		public override void Execute()
+        {
+			var audioChannel = Context.User.AudioChannel;
+			if (audioChannel == null)
+			{
+				Context.Channel.SendMessage("You need to be in a voice channel for me to join!");
+				return;
+			}
+			
+			if (Context.User.IsAdmin)
+			{
+				QueueCommand.VideoQueues.Clear();
+				Context.Channel.SendMessage("Cleaned queue.");
+			}
+			else
+			{
+				Context.Channel.SendMessage("You need to be an admin to force play a song!");
+			}
+		}
     }
 	
 	[OnCommand("play", "Plays an audio file from the internet.")]
@@ -100,11 +125,7 @@ namespace TheGuin3.Modules.Audio
 			
 			if (Context.User.IsAdmin)
 			{
-				QueueCommand.VideoQueueMutex.WaitOne();
-				QueueCommand.VideoQueues.Clear();
-				QueueCommand.VideoQueueMutex.ReleaseMutex();
-				Context.Channel.SendMessage("Cleaned queue.");
-				
+				new ClearQueueCommand(Context).Execute();
 				new QueueCommand(Context).Execute();
 			}
 			else
