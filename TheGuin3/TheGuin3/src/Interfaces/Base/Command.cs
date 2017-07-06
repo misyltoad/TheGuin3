@@ -34,8 +34,8 @@ namespace TheGuin3.Interfaces.Base
             }
         }
 
-        protected Context Context;
+        public Context Context;
 
-        protected abstract void Execute();
+        public abstract void Execute();
     }
 }

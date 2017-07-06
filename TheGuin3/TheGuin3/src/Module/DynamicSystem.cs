@@ -109,10 +109,15 @@ namespace TheGuin3.Module
 
         private Type[] Dependencies => new Type[]
         {
+            typeof(Span<int>),
             typeof(object),
             typeof(System.Collections.IList),
             typeof(System.Drawing.Image),
             typeof(System.Net.Http.HttpClient),
+            typeof(ImageSharp.Image),
+            typeof(System.Numerics.Vector),
+            typeof(System.Threading.Tasks.Parallel),
+            typeof(ImageSharp.Processing.IImageProcessor<ImageSharp.Rgba32>),
         };
 
         private MetadataReference[] DependencyAssemblyReferences
@@ -125,7 +130,6 @@ namespace TheGuin3.Module
                     references.Add(MetadataReference.CreateFromFile(dependency.GetTypeInfo().Assembly.Location));
                 }
 
-                
                 references.Add(MetadataReference.CreateFromFile(System.Reflection.Assembly.GetEntryAssembly().Location));
 
                 // HACK FOR .NETCore!

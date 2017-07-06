@@ -6,12 +6,12 @@ using TheGuin3.Interfaces.Discord;
 
 namespace TheGuin3.Modules.Core
 {
-    [OnCommand("help", "Get some help with TheGuin")]
+    [OnCommand("help", "Get some help with Summer")]
     public class HelpCommand : TheGuin3.Interfaces.Base.Command
     {
 		public HelpCommand(Context context) : base (context) {}
 		
-		protected override void Execute()
+		public override void Execute()
 		{
 			string output = "";
 			
@@ -28,17 +28,17 @@ namespace TheGuin3.Modules.Core
 			
 			Embed embed = new Embed();
 			
-			embed.Footer.IconUrl = "http://i.imgur.com/E48G7oi.png";
-			embed.Footer.Text =  "TheGuin says: \"Want me on your server? Click my name at the top of this box!\"";
+			embed.Footer.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+			embed.Footer.Text =  "Summer says: \"Want me on your server? Click my name at the top of this box!\"";
 			
-			embed.Author.Name = "TheGuin";
-			embed.Author.IconUrl = "http://i.imgur.com/E48G7oi.png";
-			embed.Author.HyperlinkUrl = "https://discordapp.com/oauth2/authorize?client_id=261318738182144000&scope=bot";
+			embed.Author.Name = "Summer";
+			embed.Author.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+			embed.Author.HyperlinkUrl = "https://discordapp.com/oauth2/authorize?client_id=330740477542400002&scope=bot&permissions=0";
 			
 			embed.Colour = Color.FromArgb(52, 152, 219);
 			
-			embed.HyperlinkUrl = "https://discordapp.com/oauth2/authorize?client_id=261318738182144000&scope=bot";
-			embed.ThumbnailUrl = "http://i.imgur.com/E48G7oi.png";
+			embed.HyperlinkUrl = "https://discordapp.com/oauth2/authorize?client_id=330740477542400002&scope=bot&permissions=0";
+			embed.ThumbnailUrl = "http://i.imgur.com/iXoxFgq.png";
 			
 			Embed.Section section = new Embed.Section();
 			section.Name = String.Format("Commands for you in {0}: \n", Context.Server.Name);

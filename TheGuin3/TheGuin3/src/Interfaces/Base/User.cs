@@ -24,6 +24,7 @@ namespace TheGuin3.Interfaces.Base
         public abstract void SendMessage(Message message);
         public bool IsServerOwner => Id == (Server?.Owner.Id ?? "");
         public abstract Server Server { get; }
+        public abstract AudioChannel AudioChannel { get; }
         public abstract bool IsBotOwner { get; }
 
         public bool IsAdmin

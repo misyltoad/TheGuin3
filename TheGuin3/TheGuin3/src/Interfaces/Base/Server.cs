@@ -12,6 +12,7 @@ namespace TheGuin3.Interfaces.Base
         public abstract string Id { get; }
 
         public abstract List<TextChannel> TextChannels { get; }
+        public abstract List<AudioChannel> AudioChannels { get; }
         public abstract List<User> Users { get; }
 
         public abstract void KickUser(User user);

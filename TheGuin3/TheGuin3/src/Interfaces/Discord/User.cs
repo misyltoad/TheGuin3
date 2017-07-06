@@ -73,9 +73,11 @@ namespace TheGuin3.Interfaces.Discord
         {
             var guildUser = (DiscordInterface as SocketGuildUser);
             var discRole = (role as Role);
+            List<SocketRole> roles = new List<SocketRole>();
+            roles.Add(discRole.DiscordInterface);
             if (guildUser != null && discRole != null)
             {
-                guildUser.AddRolesAsync(discRole.DiscordInterface);
+                guildUser.AddRolesAsync(roles);
             }
         }
         public override void SendMessage(Base.Message message)
@@ -87,13 +89,13 @@ namespace TheGuin3.Interfaces.Discord
                 if (embed != null)
                 {
                     if (discMessage.Text != null)
-                        DiscordInterface.CreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync(discMessage.Text, false, embed);
+                        DiscordInterface.GetOrCreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync(discMessage.Text, false, embed);
                     else
-                        DiscordInterface.CreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync("", false, embed);
+                        DiscordInterface.GetOrCreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync("", false, embed);
                     return;
                 }
             }
-            DiscordInterface.CreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync(message.Text);
+            DiscordInterface.GetOrCreateDMChannelAsync().GetAwaiter().GetResult().SendMessageAsync(message.Text);
         }
         public override Base.Server Server
         {
@@ -105,7 +107,13 @@ namespace TheGuin3.Interfaces.Discord
                 return null;
             }
         }
-
+        public override Base.AudioChannel AudioChannel
+        {
+            get
+            {
+                return new Discord.AudioChannel((DiscordInterface as SocketGuildUser)?.VoiceChannel);
+            }
+        }
         public override bool IsBotOwner => Id == Config.Schema.DiscordConfig.Get().OwnerId.ToString();
 
         // Discord Only

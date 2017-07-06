@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Discord;
 using Discord.WebSocket;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TheGuin3.Interfaces.Discord
 {
@@ -32,6 +34,21 @@ namespace TheGuin3.Interfaces.Discord
                 return channels;
             }
         }
+
+        public override List<Base.AudioChannel> AudioChannels
+        {
+            get
+            {
+                List<Base.AudioChannel> channels = new List<Base.AudioChannel>();
+                foreach (var channel in DiscordInterface.VoiceChannels)
+                {
+                    channels.Add(new Discord.AudioChannel(channel));
+                }
+
+                return channels;
+            }
+        }
+
         public override List<Base.User> Users
         {
             get

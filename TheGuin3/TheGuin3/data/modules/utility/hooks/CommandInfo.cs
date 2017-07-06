@@ -11,7 +11,7 @@ namespace TheGuin3.Modules.Core
     {
 		public InfoCommand(Context context) : base (context) {}
 		
-		protected override void Execute()
+		public override void Execute()
 		{
 			Embed embed = new Embed();
 			
@@ -41,8 +41,8 @@ namespace TheGuin3.Modules.Core
 			section.IsInline = true;
 			embed.Sections.Add(section);
 			
-			embed.Footer.IconUrl = "http://i.imgur.com/E48G7oi.png";
-			embed.Footer.Text = "TheGuin says: \"I was made by Joshua Ashton!\"";
+			embed.Footer.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+			embed.Footer.Text = "Summer says: \"I was made by Joshua Ashton!\"";
 		
 			Message message = new Message(embed);
 			

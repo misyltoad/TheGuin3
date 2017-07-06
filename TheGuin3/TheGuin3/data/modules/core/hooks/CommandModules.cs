@@ -20,7 +20,7 @@ namespace TheGuin3.Modules.Core
 			"Kazam!",
 		};
 		
-		protected override void Execute()
+		public override void Execute()
 		{
 			var schema = Config.Schema.ModuleListConfig.Get(Context.Server);
 			var currentModules = schema.Modules;
@@ -63,8 +63,8 @@ namespace TheGuin3.Modules.Core
 				section.IsInline = false;
 				embed.Sections.Add(section);
 				
-				embed.Footer.IconUrl = "http://i.imgur.com/E48G7oi.png";
-				embed.Footer.Text = "TheGuin says: \"To see this again, do !modules list\"";
+				embed.Footer.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+				embed.Footer.Text = "Summer says: \"To see this again, do !modules list\"";
 				
 				Message message = new Message(embed);
 				Context.Channel.SendMessage(message);
@@ -87,8 +87,8 @@ namespace TheGuin3.Modules.Core
 				section.IsInline = false;
 				embed.Sections.Add(section);
 				
-				embed.Footer.IconUrl = "http://i.imgur.com/E48G7oi.png";
-				embed.Footer.Text = String.Format("TheGuin says: \"Did you mean !modules {0} {1}?\"", Context.Args[0].ToLower() == "enable" ? "disable" : "enable", Context.Args[1].ToLower());
+				embed.Footer.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+				embed.Footer.Text = String.Format("Summer says: \"Did you mean !modules {0} {1}?\"", Context.Args[0].ToLower() == "enable" ? "disable" : "enable", Context.Args[1].ToLower());
 				
 				Message message = new Message(embed);
 				Context.Channel.SendMessage(message);
@@ -120,8 +120,8 @@ namespace TheGuin3.Modules.Core
 				section.IsInline = false;
 				embed.Sections.Add(section);
 				
-				embed.Footer.IconUrl = "http://i.imgur.com/E48G7oi.png";
-				embed.Footer.Text = "TheGuin says: \"Magic!\"";
+				embed.Footer.IconUrl = "http://i.imgur.com/iXoxFgq.png";
+				embed.Footer.Text = "Summer says: \"Magic!\"";
 				
 				Message message = new Message(embed);
 				Context.Channel.SendMessage(message);

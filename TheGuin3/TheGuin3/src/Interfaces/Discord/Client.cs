@@ -25,57 +25,84 @@ namespace TheGuin3.Interfaces.Discord
 
         public override void Init()
         {
-            DiscordInterface.LoginAsync(TokenType.Bot, Config.Token);
-            DiscordInterface.ConnectAsync();
+            DiscordInterface.Connected += () =>
+            {
+                Task.Run(() =>
+                {
+                    Console.WriteLine("Successfully connected to Discord.");
+                });
+
+                return null;
+            };
 
             DiscordInterface.MessageReceived += (msg) =>
             {
-                var socketChannel = msg.Channel as SocketTextChannel;
+               Task.Run(() =>
+               {
+                   var socketChannel = msg.Channel as SocketTextChannel;
 
-                if (socketChannel != null)
-                {
-                    var user = new Discord.User(msg.Author);
-                    var channel = new Discord.TextChannel(socketChannel);
-                    var server = new Discord.Server(socketChannel.Guild);
+                   if (socketChannel != null)
+                   {
+                       var user = new Discord.User(msg.Author);
+                       var channel = new Discord.TextChannel(socketChannel);
+                       var server = new Discord.Server(socketChannel.Guild);
 
-                    OnPublicMessageRecieved(user, channel, server, msg.Content);
-                }
-                else
-                {
-                    var user = new Discord.User(msg.Author);
-                    OnPrivateMessageRecieved(user, msg.Content);
-                }
+                       OnPublicMessageRecieved(user, channel, server, msg.Content);
+                   }
+                   else
+                   {
+                       var user = new Discord.User(msg.Author);
+                       OnPrivateMessageRecieved(user, msg.Content);
+                   }
 
+                   if (socketChannel?.Id == 330510635274338305)
+                       DiscordInterface?.GetUser(197474085414895616)?.GetOrCreateDMChannelAsync().Result?.SendMessageAsync("hey edo check memes", true);
+                });
                 return null;
             };
 
             DiscordInterface.UserJoined += (user) =>
             {
-                OnUserJoined(new Discord.User(user), new Discord.Server(user.Guild));
+                Task.Run(() =>
+                {
+                    OnUserJoined(new Discord.User(user), new Discord.Server(user.Guild));
+                });
                 return null;
             };
 
             DiscordInterface.UserBanned += (user, server) =>
             {
-                OnUserBanned(new Discord.User(user), new Discord.Server(server));
+                Task.Run(() =>
+                {
+                    OnUserBanned(new Discord.User(user), new Discord.Server(server));
+                });
                 return null;
             };
 
             DiscordInterface.UserLeft += (user) =>
             {
-                OnUserLeft(new Discord.User(user), new Discord.Server(user.Guild));
+                Task.Run(() =>
+                {
+                    OnUserLeft(new Discord.User(user), new Discord.Server(user.Guild));
+                });
                 return null;
             };
 
             DiscordInterface.UserUnbanned += (user, server) =>
             {
-                OnUserUnbanned(new Discord.User(user), new Discord.Server(server));
+                Task.Run(() =>
+                {
+                    OnUserUnbanned(new Discord.User(user), new Discord.Server(server));
+                });
                 return null;
             };
 
             DiscordInterface.GuildMemberUpdated += (oldUser, newUser) =>
             {
-                OnUserChange(new Discord.User(oldUser), new Discord.User(newUser));
+                Task.Run(() =>
+                {
+                    OnUserChange(new Discord.User(oldUser), new Discord.User(newUser));
+                });
                 return null;
             };
 
@@ -84,11 +111,26 @@ namespace TheGuin3.Interfaces.Discord
                 OnUserChange(new Discord.User(oldUser), new Discord.User(newUser));
                 return null;
             };*/
+
+            if (Config.Token == "thebotlogintokenhere")
+            {
+                Console.WriteLine("You need to configure your bot.");
+                return;
+            }
+
+            DiscordInterface.LoginAsync(TokenType.Bot, Config.Token);
+            DiscordInterface.StartAsync();
         }
 
         public override void Stop()
         {
-            DiscordInterface.DisconnectAsync();
+            DiscordInterface.StopAsync().Wait();
+            DiscordInterface.Dispose();
+        }
+
+        ~Client()
+        {
+            Stop();
         }
 
         DiscordSocketClient DiscordInterface;

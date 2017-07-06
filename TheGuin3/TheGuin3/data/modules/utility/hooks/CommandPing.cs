@@ -10,7 +10,7 @@ namespace TheGuin3.Modules.Core
         public PingCommand(Context context) : base (context)
 		{}
 		
-		protected override void Execute()
+		public override void Execute()
         {
 			if (Context.Channel != null)
 				Context.Channel.SendMessage("Pong!");
