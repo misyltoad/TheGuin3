@@ -28,7 +28,7 @@ namespace TheGuin3.Audio
             {
                 FileName = "youtube-dl",
                 //Arguments = $"--extract-audio --output \"{name}.%(ext)s\" {path}",
-                Arguments = $"{address} -o -",
+                Arguments = $"{address} -f bestaudio -o -",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
             };
